@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflate-ondemand
+  labels:
+    app: inflate-ondemand
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: inflate-ondemand
+  template:
+    metadata:
+      labels:
+        app: inflate-ondemand
+    spec:
+      containers:
+      - name: inflate
+        image: public.ecr.aws/eks-distro/kubernetes/pause:3.7
+        resources:
+          requests:
+            cpu: "1"
+            memory: 128Mi
+
+      # On-Demand 노드에만 스케줄 (Spot 인터럽션 위험 없는 워크로드)
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: karpenter.sh/capacity-type
+                operator: In
+                values: ["on-demand"]
+
+      terminationGracePeriodSeconds: 0

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflate
+  labels:
+    app: inflate
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: inflate
+  template:
+    metadata:
+      labels:
+        app: inflate
+    spec:
+      # scale-out 테스트를 위해 CPU 1개 요청
+      containers:
+      - name: inflate
+        image: public.ecr.aws/eks-distro/kubernetes/pause:3.7
+        resources:
+          requests:
+            cpu: "1"
+            memory: 128Mi
+      # 기존 노드에 스케줄되지 않도록 (Karpenter 노드에만 배포)
+      nodeSelector:
+        karpenter.sh/nodepool: default
+      terminationGracePeriodSeconds: 0

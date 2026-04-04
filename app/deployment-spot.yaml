@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inflate-spot
+  labels:
+    app: inflate-spot
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: inflate-spot
+  template:
+    metadata:
+      labels:
+        app: inflate-spot
+    spec:
+      containers:
+      - name: inflate
+        image: public.ecr.aws/eks-distro/kubernetes/pause:3.7
+        resources:
+          requests:
+            cpu: "1"
+            memory: 128Mi
+
+      # Spot 노드의 Taint를 Toleration
+      tolerations:
+      - key: karpenter.sh/capacity-type
+        value: spot
+        effect: NoSchedule
+
+      # Spot 노드를 선호 (필수는 아님 - preferredDuringScheduling)
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: karpenter.sh/capacity-type
+                operator: In
+                values: ["spot"]
+
+      terminationGracePeriodSeconds: 0

@@ -1,0 +1,35 @@
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: default
+spec:
+  # Amazon Linux 2023 최신 AMI 자동 선택
+  amiSelectorTerms:
+  - alias: al2023@latest
+
+  # 서브넷: karpenter.sh/discovery 태그가 붙은 프라이빗 서브넷
+  subnetSelectorTerms:
+  - tags:
+      karpenter.sh/discovery: my-eks-cluster
+
+  # 보안 그룹: 노드 보안 그룹
+  securityGroupSelectorTerms:
+  - tags:
+      karpenter.sh/discovery: my-eks-cluster
+
+  # EC2 노드용 IAM Instance Profile
+  role: KarpenterNodeRole-my-eks-cluster
+
+  # EBS 루트 볼륨 설정
+  blockDeviceMappings:
+  - deviceName: /dev/xvda
+    ebs:
+      volumeSize: 30Gi
+      volumeType: gp3
+      encrypted: true
+      deleteOnTermination: true
+
+  # EC2 인스턴스에 붙일 태그
+  tags:
+    ManagedBy: karpenter
+    Cluster: my-eks-cluster
