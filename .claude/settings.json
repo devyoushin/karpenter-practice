@@ -1,0 +1,40 @@
+{
+  "model": "claude-sonnet-4-6",
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git branch*)",
+      "Bash(kubectl get*)",
+      "Bash(kubectl describe*)",
+      "Bash(kubectl logs*)",
+      "Bash(kubectl top*)",
+      "Bash(kubectl events*)",
+      "Bash(helm list*)",
+      "Bash(helm status*)",
+      "Bash(helm get*)"
+    ],
+    "deny": [
+      "Bash(kubectl delete*)",
+      "Bash(kubectl drain*)",
+      "Bash(helm uninstall*)",
+      "Bash(rm -rf*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "file=$(echo $CLAUDE_TOOL_INPUT | python3 -c \"import sys,json; d=json.load(sys.stdin); print(d.get('file_path',''))\" 2>/dev/null); [ -n \"$file\" ] && echo \"[karpenter-practice] 저장: $(basename $file)\""
+          }
+        ]
+      }
+    ]
+  }
+}
