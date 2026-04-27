@@ -1,0 +1,64 @@
+###############################################################################
+# Workload — 토폴로지 분산 (Topology Spread Constraints)
+# 용도: AZ 분산, 노드 분산으로 고가용성 확보
+###############################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ha-deployment
+  namespace: default
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: ha-app
+  template:
+    metadata:
+      labels:
+        app: ha-app
+    spec:
+      topologySpreadConstraints:
+        # ── AZ 균등 분산 ─────────────────────────────────────────────────────
+        - topologyKey: topology.kubernetes.io/zone
+          maxSkew: 1           # AZ 간 Pod 수 차이 최대 1
+          whenUnsatisfiable: DoNotSchedule    # 만족 불가 시 스케줄 차단
+          labelSelector:
+            matchLabels:
+              app: ha-app
+
+        # ── 노드 분산 (한 노드에 과도 집중 방지) ─────────────────────────────
+        - topologyKey: kubernetes.io/hostname
+          maxSkew: 1
+          whenUnsatisfiable: ScheduleAnyway    # 만족 불가 시도 스케줄 허용
+          labelSelector:
+            matchLabels:
+              app: ha-app
+
+      containers:
+        - name: app
+          image: nginx:alpine
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+
+---
+###############################################################################
+# PodDisruptionBudget — Disruption 보호
+# 용도: Karpenter Disruption(통합) 시 최소 가용 Pod 보장
+###############################################################################
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: ha-app-pdb
+spec:
+  # minAvailable: 최소 가용 Pod 수 (절대값 또는 %)
+  minAvailable: 2        # 항상 최소 2개는 실행 중이어야 함
+  # maxUnavailable: "20%"  # 또는 최대 불가용 비율
+
+  selector:
+    matchLabels:
+      app: ha-app

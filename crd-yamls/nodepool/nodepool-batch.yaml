@@ -1,0 +1,77 @@
+###############################################################################
+# NodePool — 배치 작업 전용
+# 용도: 야간 배치, 데이터 처리, Job/CronJob 워크로드
+# Karpenter v1.2.1 / karpenter.sh/v1
+#
+# ★ 특징: 비용 최소화, 작업 완료 후 빠른 노드 제거
+###############################################################################
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: batch
+  annotations:
+    nodepool.karpenter.sh/description: "배치 전용 노드풀 — Job/CronJob 워크로드"
+spec:
+  template:
+    metadata:
+      labels:
+        nodepool: batch
+        workload-type: batch
+    spec:
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default
+
+      requirements:
+        # Spot + On-Demand 혼용 (Spot 우선, 없으면 On-Demand)
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+
+        # 컴퓨팅 최적화 계열 (배치 작업은 CPU 집약적)
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["c", "m", "r"]
+
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["3"]
+
+        # 배치는 큰 인스턴스가 효율적 (작업 집중)
+        - key: karpenter.k8s.aws/instance-size
+          operator: In
+          values: ["xlarge", "2xlarge", "4xlarge", "8xlarge", "16xlarge"]
+
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+
+      # 배치 전용 Taint (일반 서비스 Pod 배제)
+      # Job에 toleration 추가:
+      #   tolerations:
+      #   - key: workload-type
+      #     value: batch
+      #     effect: NoSchedule
+      taints:
+        - key: workload-type
+          value: batch
+          effect: NoSchedule
+
+      kubelet:
+        maxPods: 110
+
+  disruption:
+    # 배치 노드는 빈 노드만 제거 (실행 중 작업 보호)
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 30s    # 작업 완료 즉시 노드 제거 → 비용 절감
+
+  limits:
+    cpu: "500"
+    memory: 2000Gi
+
+  weight: 80

@@ -1,0 +1,77 @@
+###############################################################################
+# NodePool — Graviton (ARM64) 인스턴스 최적화형
+# 용도: ARM 멀티아치 컨테이너, 비용 절감 (x86 대비 ~20% 저렴)
+# Karpenter v1.2.1 / karpenter.sh/v1
+#
+# ★ 사전 조건: 애플리케이션이 linux/arm64 이미지를 지원해야 함
+###############################################################################
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: graviton
+  annotations:
+    nodepool.karpenter.sh/description: "Graviton ARM64 노드풀 — 비용 최적화 + Spot 혼용"
+spec:
+  template:
+    metadata:
+      labels:
+        nodepool: graviton
+        arch: arm64
+    spec:
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default    # AL2023 AMI는 ARM64 자동 지원
+
+      requirements:
+        # 1) Spot + On-Demand 혼용 (가용성 확보)
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+
+        # 2) Graviton 인스턴스 패밀리 (접미사 g)
+        #    c7g, m7g, r7g, c6g, m6g, r6g 등
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["c", "m", "r"]
+
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["5"]    # 6세대 이상 Graviton (c6g, m6g ...)
+
+        # 3) ★ ARM64 아키텍처 지정 (핵심)
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["arm64"]
+
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+
+        - key: karpenter.k8s.aws/instance-size
+          operator: NotIn
+          values: ["nano", "micro", "small", "metal"]
+
+      # Graviton 노드 전용 Taint
+      # Pod에 toleration 추가 필요:
+      #   tolerations:
+      #   - key: arch
+      #     value: arm64
+      #     effect: NoSchedule
+      taints:
+        - key: arch
+          value: arm64
+          effect: NoSchedule
+
+      kubelet:
+        maxPods: 110
+
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 2m
+
+  limits:
+    cpu: "100"
+    memory: 400Gi
+
+  weight: 50    # On-Demand(10)보다 높고 Spot(100)보다 낮음

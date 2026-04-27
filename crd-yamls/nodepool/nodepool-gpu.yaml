@@ -1,0 +1,80 @@
+###############################################################################
+# NodePool — GPU 인스턴스 전용
+# 용도: ML 학습/추론, GPU 연산 워크로드
+# Karpenter v1.2.1 / karpenter.sh/v1
+#
+# ★ 사전 조건: NVIDIA Device Plugin DaemonSet 설치 필요
+#   kubectl apply -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.14.5/nvidia-device-plugin.yml
+###############################################################################
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: gpu
+  annotations:
+    nodepool.karpenter.sh/description: "GPU 노드풀 — ML/AI 워크로드 전용"
+spec:
+  template:
+    metadata:
+      labels:
+        nodepool: gpu
+        accelerator: nvidia-gpu
+    spec:
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: gpu    # GPU 전용 EC2NodeClass (AL2 + NVIDIA 드라이버 AMI)
+
+      requirements:
+        # GPU 인스턴스: p(추론/학습), g(그래픽/추론)
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["p", "g"]
+
+        # 구체적 인스턴스 타입 지정도 가능
+        # - key: node.kubernetes.io/instance-type
+        #   operator: In
+        #   values: ["p3.2xlarge", "p3.8xlarge", "g4dn.xlarge", "g4dn.2xlarge"]
+
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["on-demand"]    # GPU Spot은 매우 드묾 → On-Demand 권장
+
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+
+      # GPU 노드 전용 Taint (GPU가 없는 Pod 배치 방지)
+      # Pod에 반드시 toleration 추가:
+      #   tolerations:
+      #   - key: nvidia.com/gpu
+      #     operator: Exists
+      #     effect: NoSchedule
+      taints:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+
+      # GPU 워크로드는 빠른 시작 필요 → 적극적 kubelet 설정
+      kubelet:
+        maxPods: 20    # GPU 노드는 일반적으로 Pod 수가 적음
+
+  disruption:
+    # GPU 노드는 학습 작업 중단 비용이 크므로 보수적 설정
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 5m
+
+    # GPU 워크로드 보호: 업무 시간 중 disruption 금지
+    # budgets:
+    #   - nodes: "0"
+    #     schedule: "0 0 * * 1-5"    # 월-금 UTC 00:00 (KST 09:00)
+    #     duration: 9h
+
+  limits:
+    cpu: "64"
+    memory: 256Gi
+
+  weight: 100

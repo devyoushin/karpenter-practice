@@ -1,0 +1,64 @@
+###############################################################################
+# NodePool — 멀티 아키텍처 (amd64 + arm64 혼용)
+# 용도: 다양한 아키텍처를 지원하는 워크로드, 비용 최적화
+# Karpenter v1.2.1 / karpenter.sh/v1
+#
+# ★ 사전 조건:
+#   1) 컨테이너 이미지가 multi-arch (manifest list) 여야 함
+#   2) 빌드 시 --platform linux/amd64,linux/arm64 으로 푸시
+###############################################################################
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: multi-arch
+  annotations:
+    nodepool.karpenter.sh/description: "멀티 아키텍처 노드풀 — amd64/arm64 자동 선택"
+spec:
+  template:
+    metadata:
+      labels:
+        nodepool: multi-arch
+    spec:
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default    # AL2023 AMI는 amd64/arm64 모두 지원
+
+      requirements:
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["c", "m", "r"]
+
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["5"]
+
+        # ★ amd64 와 arm64 모두 허용
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64", "arm64"]
+
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+
+        - key: karpenter.k8s.aws/instance-size
+          operator: NotIn
+          values: ["nano", "micro", "small", "metal"]
+
+      kubelet:
+        maxPods: 110
+
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 1m
+
+  limits:
+    cpu: "200"
+    memory: 800Gi
+
+  weight: 60

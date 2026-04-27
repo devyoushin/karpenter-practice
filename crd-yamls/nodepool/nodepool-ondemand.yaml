@@ -1,0 +1,108 @@
+###############################################################################
+# NodePool — On-Demand 기본형
+# 용도: 운영 워크로드, 중단 불허 서비스
+# Karpenter v1.2.1 / karpenter.sh/v1
+###############################################################################
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: ondemand
+  annotations:
+    # 이 NodePool의 목적을 명시
+    nodepool.karpenter.sh/description: "운영 On-Demand 노드풀 — 중단 불허 워크로드용"
+spec:
+  # ── 노드 템플릿 ────────────────────────────────────────────────────────────
+  template:
+    metadata:
+      labels:
+        nodepool: ondemand
+        billing: on-demand
+      annotations:
+        # 클러스터 이름 등 메타 정보 부여 가능
+        cluster: my-eks-cluster
+    spec:
+      # 어떤 EC2NodeClass를 사용할지 지정
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default            # ec2nodeclass/ec2nodeclass-basic.yaml 참고
+
+      # ── 인스턴스 요구사항(Requirements) ────────────────────────────────────
+      # 각 key는 AND 조건 / values 내부는 OR 조건
+      requirements:
+        # 1) 용량 타입: On-Demand만
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["on-demand"]
+
+        # 2) 인스턴스 패밀리: 범용(m) / 컴퓨팅(c) / 메모리(r)
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["c", "m", "r"]
+
+        # 3) 인스턴스 세대: 4세대 이상 (구형 제외)
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["3"]
+
+        # 4) CPU 사이즈: 너무 작거나 너무 큰 인스턴스 제외
+        - key: karpenter.k8s.aws/instance-size
+          operator: NotIn
+          values: ["nano", "micro", "small", "metal"]
+
+        # 5) 아키텍처: x86_64
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+
+        # 6) OS
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+
+      # ── Taints / Tolerations ───────────────────────────────────────────────
+      # On-Demand 노드에는 Taint를 걸지 않음 → 모든 Pod 스케줄 가능
+      # (필요 시 주석 해제)
+      # taints:
+      #   - key: dedicated
+      #     value: production
+      #     effect: NoSchedule
+
+      # ── Kubelet 설정 (선택) ────────────────────────────────────────────────
+      kubelet:
+        # 시스템 예약 리소스
+        systemReserved:
+          cpu: 100m
+          memory: 100Mi
+        # kubelet 예약 리소스
+        kubeReserved:
+          cpu: 100m
+          memory: 100Mi
+        # eviction 임계값
+        evictionHard:
+          memory.available: "5%"
+          nodefs.available: "10%"
+        # 최대 Pod 수 (기본값: 110)
+        maxPods: 110
+
+  # ── Disruption 정책 ────────────────────────────────────────────────────────
+  disruption:
+    # WhenEmpty: 빈 노드만 제거 (안전)
+    # WhenEmptyOrUnderutilized: 낮은 활용률 노드도 통합 (적극적 비용 절감)
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 30s    # 조건 충족 후 30초 대기 후 통합
+
+    # 특정 시간대 disruption 금지 (예: 매일 9-18시 KST 금지)
+    # budgets:
+    #   - nodes: "0"
+    #     schedule: "0 0 * * *"    # UTC 00:00 = KST 09:00
+    #     duration: 9h
+
+  # ── 자원 한도 ──────────────────────────────────────────────────────────────
+  limits:
+    cpu: "100"        # 이 NodePool이 프로비저닝할 최대 vCPU 합계
+    memory: 400Gi     # 이 NodePool이 프로비저닝할 최대 메모리 합계
+
+  # ── NodePool 우선순위 ────────────────────────────────────────────────────
+  # 값이 높을수록 먼저 선택됨 (Spot NodePool이 높으면 Spot 우선 시도)
+  weight: 10

@@ -1,0 +1,78 @@
+###############################################################################
+# NodeClaim — 수동 생성 (디버깅/테스트용)
+# 용도: 특정 인스턴스 타입 강제 프로비저닝, 장애 재현
+# Karpenter v1.2.1 / karpenter.sh/v1
+#
+# ★ 주의: 일반 운영에서는 NodeClaim을 직접 만들지 않음
+#          Karpenter가 Pod 스케줄 요청에 따라 자동 생성
+#          이 파일은 학습/디버깅 참고용
+#
+# NodeClaim 라이프사이클:
+#   Pending → Provisioned (EC2 생성됨) → Initialized (Ready) → Disrupted (제거 중) → 삭제
+###############################################################################
+apiVersion: karpenter.sh/v1
+kind: NodeClaim
+metadata:
+  name: manual-test-node
+  annotations:
+    karpenter.sh/description: "수동 생성 테스트 노드 — 디버깅용"
+spec:
+  # ── 인스턴스 요구사항 ──────────────────────────────────────────────────────
+  requirements:
+    - key: karpenter.sh/capacity-type
+      operator: In
+      values: ["on-demand"]
+
+    # 구체적 인스턴스 타입 지정 (테스트 목적)
+    - key: node.kubernetes.io/instance-type
+      operator: In
+      values: ["m5.xlarge"]
+
+    - key: topology.kubernetes.io/zone
+      operator: In
+      values: ["ap-northeast-2a"]
+
+    - key: kubernetes.io/arch
+      operator: In
+      values: ["amd64"]
+
+    - key: kubernetes.io/os
+      operator: In
+      values: ["linux"]
+
+  # ── 사용할 EC2NodeClass ────────────────────────────────────────────────────
+  nodeClassRef:
+    group: karpenter.k8s.aws
+    kind: EC2NodeClass
+    name: default
+
+  # ── 노드에 부여할 Taint ────────────────────────────────────────────────────
+  taints:
+    - key: test-node
+      value: "true"
+      effect: NoSchedule
+
+  # ── 리소스 요청 (최소 보장) ────────────────────────────────────────────────
+  resources:
+    requests:
+      cpu: "4"
+      memory: 16Gi
+
+---
+###############################################################################
+# NodeClaim 조회 명령어 (참고)
+###############################################################################
+# kubectl get nodeclaim                          # 목록
+# kubectl get nodeclaim -o wide                  # 상세 (인스턴스 타입, AZ 포함)
+# kubectl describe nodeclaim <name>              # 상세 이벤트 확인
+# kubectl get nodeclaim -o yaml                  # 전체 YAML (status 포함)
+#
+# Status 필드 설명:
+#   conditions:
+#     - type: Launched       # EC2 인스턴스 생성 완료
+#     - type: Registered     # Kubernetes 노드로 등록 완료
+#     - type: Initialized    # 노드 Ready 상태
+#     - type: Consolidated   # 통합 대상으로 선정
+#
+# 수동 삭제 (주의: 노드 종료됨):
+#   kubectl delete nodeclaim <name>

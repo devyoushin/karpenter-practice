@@ -1,0 +1,87 @@
+###############################################################################
+# EC2NodeClass — 커스텀 AMI 사용
+# 용도: 보안 강화, 사전 설치 소프트웨어, 골든 이미지 사용
+# Karpenter v1.2.1 / karpenter.k8s.aws/v1
+#
+# ★ 커스텀 AMI는 alias 대신 id 또는 name으로 지정
+###############################################################################
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: custom-ami
+spec:
+  # ── 커스텀 AMI 선택 방식 1: AMI ID 직접 지정 ─────────────────────────────
+  # 프로덕션에서는 ID 고정으로 불변성 보장 권장
+  amiSelectorTerms:
+    - id: ami-0123456789abcdef0    # us-east-1 용
+    - id: ami-0fedcba9876543210    # ap-northeast-2 용 (멀티 리전 시)
+
+  # ── 커스텀 AMI 선택 방식 2: 이름 패턴 (최신 버전 자동 선택) ────────────────
+  # amiSelectorTerms:
+  #   - name: "my-eks-golden-ami-*"
+  #     owner: "123456789012"    # AWS 계정 ID (타 계정 AMI 사용 시 필요)
+
+  # ── 커스텀 AMI 선택 방식 3: 태그 기반 ──────────────────────────────────────
+  # amiSelectorTerms:
+  #   - tags:
+  #       ami-type: eks-node
+  #       eks-version: "1.30"
+  #       approved: "true"
+
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: my-eks-cluster
+
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: my-eks-cluster
+
+  role: KarpenterNodeRole-my-eks-cluster
+
+  # ── UserData — AL2023 (nodeadm 형식) ──────────────────────────────────────
+  # 커스텀 AMI 사용 시 bootstrap 스크립트를 직접 작성해야 함
+  # AL2023은 nodeadm을 통해 클러스터 조인
+  userData: |
+    #!/bin/bash
+    # nodeadm을 사용한 EKS 노드 등록 (AL2023)
+    cat <<EOF > /etc/eks/nodeadm-config.yaml
+    apiVersion: node.eks.aws/v1alpha1
+    kind: NodeConfig
+    spec:
+      cluster:
+        name: my-eks-cluster
+        apiServerEndpoint: https://XXXX.gr7.ap-northeast-2.eks.amazonaws.com
+        certificateAuthority: LS0t...   # base64 CA
+        cidr: 10.100.0.0/16
+      kubelet:
+        config:
+          maxPods: 110
+        flags:
+          - --node-labels=custom-ami=true
+    EOF
+    nodeadm init -c file:///etc/eks/nodeadm-config.yaml
+
+  # ── AL2 (구형) UserData 예시 ──────────────────────────────────────────────
+  # userData: |
+  #   #!/bin/bash
+  #   /etc/eks/bootstrap.sh my-eks-cluster \
+  #     --b64-cluster-ca <CA> \
+  #     --apiserver-endpoint https://XXXX.gr7.ap-northeast-2.eks.amazonaws.com \
+  #     --kubelet-extra-args '--node-labels=custom-ami=true'
+
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 50Gi    # 커스텀 AMI는 더 큰 루트 볼륨 필요할 수 있음
+        volumeType: gp3
+        encrypted: true
+        deleteOnTermination: true
+
+  metadataOptions:
+    httpTokens: required
+    httpPutResponseHopLimit: 1
+
+  tags:
+    ManagedBy: karpenter
+    AMIType: custom
+    Cluster: my-eks-cluster

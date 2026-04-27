@@ -1,0 +1,102 @@
+###############################################################################
+# Workload — Spot 인스턴스 활용 Pod 예시
+# 용도: Spot NodePool에 스케줄되는 워크로드 패턴
+###############################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spot-workload
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: spot-workload
+  template:
+    metadata:
+      labels:
+        app: spot-workload
+    spec:
+      # ── Spot 노드 Taint Toleration ─────────────────────────────────────────
+      # nodepool-spot.yaml의 taints와 일치해야 함
+      tolerations:
+        - key: karpenter.sh/capacity-type
+          value: spot
+          effect: NoSchedule
+
+      # ── Spot 노드 우선 배치 (필수는 아님, 있으면 선호) ──────────────────────
+      affinity:
+        nodeAffinity:
+          # 강제 배치: Spot 노드에만 스케줄
+          # requiredDuringSchedulingIgnoredDuringExecution:
+          #   nodeSelectorTerms:
+          #   - matchExpressions:
+          #     - key: karpenter.sh/capacity-type
+          #       operator: In
+          #       values: ["spot"]
+
+          # 선호 배치: Spot 선호, 없으면 On-Demand도 허용
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: karpenter.sh/capacity-type
+                    operator: In
+                    values: ["spot"]
+
+      # ── Spot 중단 대비 설정 ────────────────────────────────────────────────
+      # terminationGracePeriodSeconds: 작업 완료 대기 시간 (최대 120s)
+      terminationGracePeriodSeconds: 60
+
+      containers:
+        - name: app
+          image: nginx:alpine
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+
+          # ── Spot 중단 신호 처리 ────────────────────────────────────────────
+          # SIGTERM 수신 후 graceful shutdown
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 5"]
+
+---
+###############################################################################
+# Spot 체크포인팅 패턴 (Job에서 권장)
+###############################################################################
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: spot-batch-job
+spec:
+  # Spot 중단 시 재시도
+  backoffLimit: 5
+  template:
+    spec:
+      restartPolicy: OnFailure
+
+      tolerations:
+        - key: karpenter.sh/capacity-type
+          value: spot
+          effect: NoSchedule
+        - key: workload-type
+          value: batch
+          effect: NoSchedule
+
+      # Spot 중단 시 최대 2분 대기
+      terminationGracePeriodSeconds: 120
+
+      containers:
+        - name: batch
+          image: busybox
+          command: ["sh", "-c", "echo 'Processing...'; sleep 300"]
+          resources:
+            requests:
+              cpu: "2"
+              memory: 4Gi

@@ -1,0 +1,95 @@
+###############################################################################
+# EC2NodeClass — 기본형
+# 용도: 대부분의 일반 워크로드
+# Karpenter v1.2.1 / karpenter.k8s.aws/v1
+#
+# EC2NodeClass = AWS EC2 관련 설정 모음 (AMI, Subnet, SG, IAM, EBS 등)
+# NodePool이 "무엇을"이라면, EC2NodeClass는 "어떻게"를 담당
+###############################################################################
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: default
+  annotations:
+    ec2nodeclass.karpenter.sh/description: "기본 EC2NodeClass — AL2023 AMI, gp3 EBS"
+spec:
+  # ── AMI 선택 ──────────────────────────────────────────────────────────────
+  # alias 방식: Karpenter가 최신 버전 자동 선택
+  # al2023@latest   → Amazon Linux 2023 최신
+  # al2023@v20240101 → 특정 버전 고정 (프로덕션 권장)
+  # al2          → Amazon Linux 2 (레거시)
+  # bottlerocket@latest → Bottlerocket OS
+  # windows2019 / windows2022 → Windows (제한적 지원)
+  amiSelectorTerms:
+    - alias: al2023@latest
+
+  # ── 서브넷 선택 ───────────────────────────────────────────────────────────
+  # tags 방식: 태그가 붙은 서브넷 자동 탐색 (권장)
+  # Karpenter 설치 시 프라이빗 서브넷에 이 태그를 추가해야 함:
+  #   aws ec2 create-tags --resources <subnet-id> \
+  #     --tags Key=karpenter.sh/discovery,Value=<cluster-name>
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: my-eks-cluster
+
+  # ID 방식 (명시적 지정)
+  # subnetSelectorTerms:
+  #   - id: subnet-0123456789abcdef0
+  #   - id: subnet-0123456789abcdef1
+
+  # ── 보안 그룹 선택 ─────────────────────────────────────────────────────────
+  # 클러스터 노드 보안 그룹을 자동 탐색
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: my-eks-cluster
+
+  # ID 방식
+  # securityGroupSelectorTerms:
+  #   - id: sg-0123456789abcdef0
+
+  # ── IAM Role ──────────────────────────────────────────────────────────────
+  # EC2 노드에 부여할 IAM Instance Profile
+  # 형식: KarpenterNodeRole-<cluster-name>
+  # 이 Role에는 다음 정책이 있어야 함:
+  #   - AmazonEKSWorkerNodePolicy
+  #   - AmazonEKS_CNI_Policy
+  #   - AmazonEC2ContainerRegistryReadOnly
+  #   - AmazonSSMManagedInstanceCore (SSM 접속용)
+  role: KarpenterNodeRole-my-eks-cluster
+
+  # ── EBS 블록 디바이스 설정 ─────────────────────────────────────────────────
+  blockDeviceMappings:
+    - deviceName: /dev/xvda    # 루트 볼륨 (AL2023)
+      ebs:
+        volumeSize: 30Gi       # 최소 20Gi 권장 (컨테이너 이미지 레이어)
+        volumeType: gp3        # gp3: gp2 대비 20% 저렴, 성능 독립적
+        iops: 3000             # gp3 기본값 (추가 비용 없음)
+        throughput: 125        # MB/s (gp3 기본값)
+        encrypted: true        # 암호화 권장
+        deleteOnTermination: true
+
+  # ── 인스턴스 메타데이터 설정 ────────────────────────────────────────────────
+  instanceStorePolicy: RAID0    # 인스턴스 스토어 RAID0 구성 (있는 경우)
+
+  # IMDSv2 강제 (보안 권장)
+  metadataOptions:
+    httpEndpoint: enabled
+    httpProtocolIPv6: disabled
+    httpPutResponseHopLimit: 1    # 1: 컨테이너에서 IMDS 접근 제한 (보안 강화)
+    httpTokens: required          # required: IMDSv2 강제
+
+  # ── EC2 태그 ──────────────────────────────────────────────────────────────
+  # 프로비저닝된 EC2 인스턴스에 자동으로 붙는 태그
+  tags:
+    ManagedBy: karpenter
+    Cluster: my-eks-cluster
+    Environment: production
+    # 비용 추적용 태그
+    # CostCenter: platform-team
+    # Project: my-app
+
+  # ── UserData (선택) ───────────────────────────────────────────────────────
+  # 노드 부팅 시 실행할 스크립트 (AL2023은 nodeadm 형식 사용)
+  # userData: |
+  #   #!/bin/bash
+  #   /etc/eks/bootstrap.sh my-eks-cluster

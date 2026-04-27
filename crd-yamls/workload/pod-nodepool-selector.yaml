@@ -1,0 +1,139 @@
+###############################################################################
+# Workload — NodePool 선택 패턴 모음
+# 용도: 특정 NodePool에 Pod를 배치하는 다양한 방법
+###############################################################################
+
+# ── 방법 1: nodeSelector (가장 간단) ─────────────────────────────────────────
+# NodePool이 template.metadata.labels에 "nodepool: <name>" 을 가져야 함
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-selector-example
+spec:
+  nodeSelector:
+    nodepool: ondemand    # 또는 spot, graviton, batch 등
+
+  containers:
+    - name: app
+      image: nginx:alpine
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+
+---
+# ── 방법 2: nodeAffinity — 강제 배치 (required) ───────────────────────────
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-affinity-required
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              # 특정 인스턴스 패밀리 강제
+              - key: karpenter.k8s.aws/instance-category
+                operator: In
+                values: ["m"]
+              # 특정 용량 타입 강제
+              - key: karpenter.sh/capacity-type
+                operator: In
+                values: ["on-demand"]
+
+  containers:
+    - name: app
+      image: nginx:alpine
+      resources:
+        requests:
+          cpu: 500m
+          memory: 1Gi
+
+---
+# ── 방법 3: nodeAffinity — 선호 배치 (preferred) ─────────────────────────
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-affinity-preferred
+spec:
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        # weight 합계가 높을수록 우선 선택
+        - weight: 80
+          preference:
+            matchExpressions:
+              - key: karpenter.sh/capacity-type
+                operator: In
+                values: ["spot"]
+        - weight: 20
+          preference:
+            matchExpressions:
+              - key: karpenter.sh/capacity-type
+                operator: In
+                values: ["on-demand"]
+
+  containers:
+    - name: app
+      image: nginx:alpine
+      resources:
+        requests:
+          cpu: 250m
+          memory: 512Mi
+
+---
+# ── 방법 4: Taint Toleration ─────────────────────────────────────────────
+# NodePool에 taint가 걸려 있으면 반드시 toleration 추가
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-toleration-example
+spec:
+  tolerations:
+    # Spot NodePool의 taint 허용
+    - key: karpenter.sh/capacity-type
+      value: spot
+      effect: NoSchedule
+    # Batch NodePool의 taint 허용
+    - key: workload-type
+      value: batch
+      effect: NoSchedule
+
+  containers:
+    - name: app
+      image: busybox
+      command: ["sleep", "3600"]
+      resources:
+        requests:
+          cpu: "1"
+          memory: 2Gi
+
+---
+# ── 방법 5: 특정 인스턴스 타입 지정 ─────────────────────────────────────
+# Karpenter가 지원하는 well-known label 활용
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-instance-type
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: node.kubernetes.io/instance-type
+                operator: In
+                values:
+                  - m5.xlarge
+                  - m5.2xlarge
+                  - m6i.xlarge
+                  - m6i.2xlarge
+
+  containers:
+    - name: app
+      image: nginx:alpine
+      resources:
+        requests:
+          cpu: "2"
+          memory: 8Gi

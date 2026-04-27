@@ -1,0 +1,96 @@
+###############################################################################
+# EC2NodeClass — 고급 설정 (보안/성능 강화)
+# 용도: 보안 요구사항이 높은 프로덕션, 고성능 IO 워크로드
+# Karpenter v1.2.1 / karpenter.k8s.aws/v1
+###############################################################################
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: advanced
+spec:
+  amiSelectorTerms:
+    - alias: al2023@latest
+
+  # ── 특정 AZ 서브넷만 사용 ────────────────────────────────────────────────
+  # 고가용성: 여러 AZ 서브넷 지정
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: my-eks-cluster
+        subnet-type: private
+        az: ap-northeast-2a
+    - tags:
+        karpenter.sh/discovery: my-eks-cluster
+        subnet-type: private
+        az: ap-northeast-2b
+    - tags:
+        karpenter.sh/discovery: my-eks-cluster
+        subnet-type: private
+        az: ap-northeast-2c
+
+  # ── 여러 보안 그룹 조합 ───────────────────────────────────────────────────
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: my-eks-cluster
+    - id: sg-0123456789abcdef0    # 추가 보안 그룹 (예: 내부 DB 접근용)
+
+  role: KarpenterNodeRole-my-eks-cluster
+
+  # ── 고성능 EBS 설정 ───────────────────────────────────────────────────────
+  blockDeviceMappings:
+    # 루트 볼륨 (OS + 컨테이너 런타임)
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 50Gi
+        volumeType: gp3
+        iops: 4000           # gp3 최대 16000, 기본 3000
+        throughput: 250      # gp3 최대 1000 MB/s, 기본 125
+        encrypted: true
+        kmsKeyID: arn:aws:kms:ap-northeast-2:123456789012:key/mrk-xxx    # CMK 암호화
+        deleteOnTermination: true
+
+    # 데이터 볼륨 (컨테이너 임시 데이터, 선택)
+    # - deviceName: /dev/xvdb
+    #   ebs:
+    #     volumeSize: 100Gi
+    #     volumeType: gp3
+    #     encrypted: true
+    #     deleteOnTermination: true
+
+  # ── 보안 강화 메타데이터 설정 ─────────────────────────────────────────────
+  metadataOptions:
+    httpEndpoint: enabled
+    httpProtocolIPv6: disabled
+    httpPutResponseHopLimit: 1    # 컨테이너 → IMDS 직접 접근 차단
+    httpTokens: required          # IMDSv2 강제 (SSRF 공격 방어)
+
+  # ── 인스턴스 스토어 정책 ─────────────────────────────────────────────────
+  # RAID0: 인스턴스 스토어 NVMe를 RAID0으로 구성하여 /var/lib/kubelet에 마운트
+  # 인스턴스 스토어가 없는 인스턴스는 무시됨
+  instanceStorePolicy: RAID0
+
+  # ── 자세한 태그 (비용 분석용) ─────────────────────────────────────────────
+  tags:
+    ManagedBy: karpenter
+    Cluster: my-eks-cluster
+    Environment: production
+    Team: platform
+    CostCenter: "12345"
+    Compliance: sox    # 컴플라이언스 추적용
+
+  # ── UserData (고급 초기화 스크립트) ──────────────────────────────────────
+  # userData: |
+  #   #!/bin/bash
+  #   # 1) 커널 파라미터 튜닝
+  #   cat >> /etc/sysctl.conf << 'EOF'
+  #   net.core.somaxconn=65535
+  #   net.ipv4.tcp_max_syn_backlog=65535
+  #   vm.max_map_count=262144
+  #   EOF
+  #   sysctl -p
+  #
+  #   # 2) ulimit 설정
+  #   echo "* soft nofile 65536" >> /etc/security/limits.conf
+  #   echo "* hard nofile 65536" >> /etc/security/limits.conf
+  #
+  #   # 3) 추가 패키지 설치
+  #   yum install -y amazon-cloudwatch-agent
