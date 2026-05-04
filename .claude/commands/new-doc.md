@@ -12,7 +12,7 @@
    - 스케일링: consolidation, disruption, spot, graviton
    - 관찰가능성: observability, metrics, logging
    - 마이그레이션: ca-migration, upgrade
-3. `<주제명>-guide.md`를 생성하세요:
+3. `docs/<주제명>-guide.md`를 생성하세요:
    - CLAUDE.md의 환경 설정 (EKS, Karpenter 버전) 반영
    - NodePool/EC2NodeClass YAML 예시 포함
    - kubectl 확인 명령어 포함

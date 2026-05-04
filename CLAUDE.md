@@ -43,22 +43,23 @@ karpenter-practice/
 
 | 문서 | 주제 |
 |------|------|
-| `install.md` | Karpenter 설치 (Helm) |
-| `nodepool-guide.md` | NodePool 기본 설정 |
-| `ec2nodeclass-guide.md` | EC2NodeClass 설정 |
-| `multi-nodepool-guide.md` | 멀티 NodePool 전략 |
-| `consolidation-guide.md` | 노드 통합(Consolidation) |
-| `disruption-guide.md` | Disruption 정책 |
-| `spot-guide.md` | Spot 인스턴스 활용 |
-| `graviton-guide.md` | Graviton(ARM) 워크로드 |
-| `topology-spread-guide.md` | 토폴로지 분산 |
-| `batch-job-guide.md` | 배치 작업 최적화 |
-| `observability-guide.md` | 기본 관찰가능성 |
-| `observability-advanced-guide.md` | 심화 관찰가능성 |
-| `ca-migration-guide.md` | Cluster Autoscaler 마이그레이션 |
-| `scale-test.md` | 스케일 테스트 (inflate) |
-| `security-guide.md` | 보안 설정 |
-| `keda-guide.md` | KEDA 연동 |
+| `docs/install.md` | Karpenter 설치 (Helm) |
+| `docs/nodepool-guide.md` | NodePool 기본 설정 |
+| `docs/ec2nodeclass-guide.md` | EC2NodeClass 설정 |
+| `docs/multi-nodepool-guide.md` | 멀티 NodePool 전략 |
+| `docs/consolidation-guide.md` | 노드 통합(Consolidation) |
+| `docs/disruption-guide.md` | Disruption 정책 |
+| `docs/spot-guide.md` | Spot 인스턴스 활용 |
+| `docs/graviton-guide.md` | Graviton(ARM) 워크로드 |
+| `docs/topology-spread-guide.md` | 토폴로지 분산 |
+| `docs/batch-job-guide.md` | 배치 작업 최적화 |
+| `docs/observability-guide.md` | 기본 관찰가능성 |
+| `docs/observability-advanced-guide.md` | 심화 관찰가능성 |
+| `docs/ca-migration-guide.md` | Cluster Autoscaler 마이그레이션 |
+| `docs/scale-test.md` | 스케일 테스트 (inflate) |
+| `docs/security-guide.md` | 보안 설정 |
+| `docs/keda-guide.md` | KEDA 연동 |
+| `docs/cost-optimization-guide.md` | 비용 최적화 전략 (환경별 NodePool, 야간 자동 종료) |
 
 ---
 

@@ -2,7 +2,7 @@ Karpenter 가이드 문서 또는 YAML을 검토합니다.
 
 **사용법**: `/review-doc <파일 경로>`
 
-**예시**: `/review-doc nodepool-guide.md`
+**예시**: `/review-doc docs/nodepool-guide.md`
 
 다음 기준으로 검토하세요:
 

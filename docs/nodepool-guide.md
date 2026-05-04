@@ -154,7 +154,7 @@ disruption:
   consolidateAfter: 30s    # 조건 충족 후 몇 초 뒤에 통합 시작
 ```
 
-> 자세한 내용은 `consolidation-guide.md`와 `disruption-guide.md` 참고
+> 자세한 내용은 `docs/consolidation-guide.md`와 `docs/disruption-guide.md` 참고
 
 ---
 
