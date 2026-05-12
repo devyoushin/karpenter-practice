@@ -60,6 +60,11 @@ karpenter-practice/
 | `docs/security-guide.md` | 보안 설정 |
 | `docs/keda-guide.md` | KEDA 연동 |
 | `docs/cost-optimization-guide.md` | 비용 최적화 전략 (환경별 NodePool, 야간 자동 종료) |
+| `docs/architecture-deep-dive.md` | Karpenter 내부 동작 원리 (Provisioning Loop, NodeClaim 생명주기) |
+| `docs/disruption-deep-dive.md` | Disruption 심화 (Consolidation 알고리즘, Drift 메커니즘, PDB 상호작용) |
+| `docs/scheduling-deep-dive.md` | 스케줄링 심화 (인스턴스 선택 로직, Well-Known Labels, Affinity 전략) |
+| `docs/production-patterns.md` | 프로덕션 운영 패턴 (AMI 롤링, Karpenter 업그레이드, 장애 대응) |
+| `docs/cost-visibility-guide.md` | 비용 가시성 (Prometheus 메트릭, Kubecost, Chargeback 모델) |
 
 ---
 
