@@ -180,8 +180,8 @@ kubectl logs -n kube-system -l app.kubernetes.io/name=karpenter -c controller -f
 kubectl top nodes
 
 # NodePool 적용
-kubectl apply -f crd-yamls/nodepool/nodepool-spot.yaml
-kubectl apply -f crd-yamls/ec2nodeclass/ec2nodeclass-basic.yaml
+kubectl apply -f ops/crd-yamls/nodepool/nodepool-spot.yaml
+kubectl apply -f ops/crd-yamls/ec2nodeclass/ec2nodeclass-basic.yaml
 
 # 스케일 테스트 (inflate 앱)
 kubectl scale deployment inflate --replicas=10

@@ -34,10 +34,10 @@ kubectl get ec2nodeclass
 
 ```bash
 # EC2NodeClass 먼저 배포 (NodePool이 참조하므로)
-kubectl apply -f karpenter/ec2nodeclass-default.yaml
+kubectl apply -f ops/karpenter/ec2nodeclass-default.yaml
 
 # NodePool 배포
-kubectl apply -f karpenter/nodepool-default.yaml
+kubectl apply -f ops/karpenter/nodepool-default.yaml
 
 # 확인
 kubectl get ec2nodeclass
@@ -53,7 +53,7 @@ kubectl describe ec2nodeclass default
 
 ```bash
 # inflate Deployment 배포 (replicas: 0으로 시작)
-kubectl apply -f app/deployment-inflate.yaml
+kubectl apply -f ops/app/deployment-inflate.yaml
 
 # 현재 노드 수 확인
 kubectl get nodes
@@ -140,10 +140,10 @@ Pod → Terminated (replicas: 0)
 
 ```bash
 # Spot NodePool 배포
-kubectl apply -f karpenter/nodepool-spot.yaml
+kubectl apply -f ops/karpenter/nodepool-spot.yaml
 
 # Spot 전용 워크로드 배포
-kubectl apply -f app/deployment-spot.yaml
+kubectl apply -f ops/app/deployment-spot.yaml
 kubectl scale deployment inflate-spot --replicas=5
 
 # Spot 노드가 생성되는지 확인

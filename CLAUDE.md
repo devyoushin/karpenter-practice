@@ -17,11 +17,11 @@ karpenter-practice/
 ├── .claude/
 │   ├── settings.json
 │   └── commands/              # /new-doc, /new-runbook, /review-doc, /add-troubleshooting, /search-kb
-├── agents/                    # doc-writer, nodepool-designer, troubleshooter, performance-advisor
-├── templates/                 # service-doc, runbook, incident-report
-├── rules/                     # doc-writing, karpenter-conventions, security-checklist, monitoring
-├── karpenter/                 # Karpenter 설정 YAML
-├── app/                       # 스케일 테스트 앱
+├── docs/agents/                    # doc-writer, nodepool-designer, troubleshooter, performance-advisor
+├── docs/templates/                 # service-doc, runbook, incident-report
+├── docs/rules/                     # doc-writing, karpenter-conventions, security-checklist, monitoring
+├── ops/karpenter/                 # Karpenter 설정 YAML
+├── ops/app/                       # 스케일 테스트 앱
 └── *-guide.md                 # 주제별 가이드 문서
 ```
 

@@ -86,12 +86,12 @@ docs/                              # 가이드 문서 (17개)
 ├── cost-optimization-guide.md
 └── ...
 
-app/
+ops/app/
 ├── deployment-inflate.yaml        # scale-out test workload (replicas: 0 → N)
 ├── deployment-spot.yaml           # workload targeting Spot nodes
 └── deployment-ondemand.yaml       # workload targeting On-Demand nodes
 
-karpenter/
+ops/karpenter/
 ├── ec2nodeclass-default.yaml      # AMI, subnet, security group, instance profile
 ├── nodepool-default.yaml          # On-Demand NodePool
 └── nodepool-spot.yaml             # Spot NodePool
