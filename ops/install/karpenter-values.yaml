@@ -1,0 +1,14 @@
+replicas: 2
+controller:
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1
+      memory: 2Gi
+settings:
+  featureGates:
+    spotToSpotConsolidation: true
+serviceMonitor:
+  enabled: true
