@@ -6,6 +6,23 @@ A hands-on repository for learning Karpenter on EKS.
 
 ---
 
+## 어디서 시작할까
+
+- 문서 지도: `docs/README.md`
+- 첫 문서: `docs/install.md`
+- 운영 보조 자료: `ops/README.md`
+- AI 작업 지침: `CLAUDE.md`
+
+## 구조
+
+| 경로 | 내용 |
+|------|------|
+| `docs/` | 설치, NodePool, EC2NodeClass, 스케줄링, 비용, 운영 문서 |
+| `ops/` | Karpenter YAML, CRD 예제, 스케일 테스트 워크로드 |
+| `CLAUDE.md` | 이 레포에서 Claude가 참고할 작업 지침 |
+
+---
+
 ## Learning Path
 
 ```
@@ -77,7 +94,7 @@ A hands-on repository for learning Karpenter on EKS.
 
 ---
 
-## Manifest Structure
+## 상세 구조
 
 ```
 docs/                              # 가이드 문서 (17개)
