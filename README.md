@@ -9,7 +9,7 @@ A hands-on repository for learning Karpenter on EKS.
 ## 어디서 시작할까
 
 - 문서 지도: `docs/README.md`
-- 첫 문서: `docs/install.md`
+- 첫 문서: `docs/getting-started/install.md`
 - 운영 보조 자료: `ops/README.md`
 - AI 작업 지침: `CLAUDE.md`
 
@@ -17,7 +17,7 @@ A hands-on repository for learning Karpenter on EKS.
 
 | 경로 | 내용 |
 |------|------|
-| `docs/` | 설치, NodePool, EC2NodeClass, 스케줄링, 비용, 운영 문서 |
+| `docs/` | 목적별로 정리한 Karpenter 학습 문서와 AI 작업 보조 자료 |
 | `ops/` | Karpenter YAML, CRD 예제, 스케일 테스트 워크로드 |
 | `CLAUDE.md` | 이 레포에서 Claude가 참고할 작업 지침 |
 
@@ -26,17 +26,17 @@ A hands-on repository for learning Karpenter on EKS.
 ## Learning Path
 
 ```
-1. Installation    → docs/install.md
-2. Core Concepts   → docs/nodepool-guide.md, docs/ec2nodeclass-guide.md
+1. Installation    → docs/getting-started/install.md
+2. Core Concepts   → docs/core/nodepool-guide.md, docs/core/ec2nodeclass-guide.md
 3. Advanced
-   ├── Cost        → docs/consolidation-guide.md, docs/spot-guide.md, docs/graviton-guide.md
-   │               → docs/cost-optimization-guide.md
-   ├── Control     → docs/disruption-guide.md, docs/batch-job-guide.md
-   ├── Scale       → docs/topology-spread-guide.md, docs/keda-guide.md
-   ├── Operations  → docs/multi-nodepool-guide.md, docs/ca-migration-guide.md
-   ├── Security    → docs/security-guide.md
-   └── Observability → docs/observability-guide.md, docs/observability-advanced-guide.md
-4. Hands-on        → docs/scale-test.md
+   ├── Cost        → docs/cost/consolidation-guide.md, docs/cost/spot-guide.md, docs/cost/graviton-guide.md
+   │               → docs/cost/cost-optimization-guide.md
+   ├── Control     → docs/operations/disruption-guide.md, docs/scheduling/batch-job-guide.md
+   ├── Scale       → docs/scheduling/topology-spread-guide.md, docs/integrations/keda-guide.md
+   ├── Operations  → docs/core/multi-nodepool-guide.md, docs/operations/ca-migration-guide.md
+   ├── Security    → docs/security/security-guide.md
+   └── Observability → docs/observability/observability-guide.md, docs/observability/observability-advanced-guide.md
+4. Hands-on        → docs/hands-on/scale-test.md
 ```
 
 ---
@@ -46,62 +46,72 @@ A hands-on repository for learning Karpenter on EKS.
 ### Installation
 | File | Description |
 |------|-------------|
-| [docs/install.md](./docs/install.md) | Install Karpenter via Helm on EKS (IAM, IRSA, Helm) |
+| [docs/getting-started/install.md](./docs/getting-started/install.md) | Install Karpenter via Helm on EKS (IAM, IRSA, Helm) |
 
 ### Core Concepts
 | File | Description |
 |------|-------------|
-| [docs/nodepool-guide.md](./docs/nodepool-guide.md) | NodePool — node provisioning rules (instance types, limits, taints) |
-| [docs/ec2nodeclass-guide.md](./docs/ec2nodeclass-guide.md) | EC2NodeClass — AWS-specific settings (AMI, subnet, security group) |
+| [docs/core/nodepool-guide.md](./docs/core/nodepool-guide.md) | NodePool — node provisioning rules (instance types, limits, taints) |
+| [docs/core/ec2nodeclass-guide.md](./docs/core/ec2nodeclass-guide.md) | EC2NodeClass — AWS-specific settings (AMI, subnet, security group) |
 
 ### Advanced — Cost
 | File | Description |
 |------|-------------|
-| [docs/cost-optimization-guide.md](./docs/cost-optimization-guide.md) | Cost strategy — env-based NodePool, scheduled node on/off (EventBridge+Lambda) |
-| [docs/consolidation-guide.md](./docs/consolidation-guide.md) | Node Consolidation — automatic bin-packing and cost optimization |
-| [docs/spot-guide.md](./docs/spot-guide.md) | Spot Instances — interruption handling and mixed capacity strategy |
-| [docs/graviton-guide.md](./docs/graviton-guide.md) | Graviton (ARM64) — multi-arch strategy, ~20% cost reduction |
+| [docs/cost/cost-optimization-guide.md](./docs/cost/cost-optimization-guide.md) | Cost strategy — env-based NodePool, scheduled node on/off (EventBridge+Lambda) |
+| [docs/cost/consolidation-guide.md](./docs/cost/consolidation-guide.md) | Node Consolidation — automatic bin-packing and cost optimization |
+| [docs/cost/spot-guide.md](./docs/cost/spot-guide.md) | Spot Instances — interruption handling and mixed capacity strategy |
+| [docs/cost/graviton-guide.md](./docs/cost/graviton-guide.md) | Graviton (ARM64) — multi-arch strategy, ~20% cost reduction |
 
 ### Advanced — Control
 | File | Description |
 |------|-------------|
-| [docs/disruption-guide.md](./docs/disruption-guide.md) | Disruption Controls — budgets, do-not-disrupt annotations, drift |
-| [docs/batch-job-guide.md](./docs/batch-job-guide.md) | Batch/Job patterns — protecting jobs, graceful shutdown, zero-scale |
+| [docs/operations/disruption-guide.md](./docs/operations/disruption-guide.md) | Disruption Controls — budgets, do-not-disrupt annotations, drift |
+| [docs/scheduling/batch-job-guide.md](./docs/scheduling/batch-job-guide.md) | Batch/Job patterns — protecting jobs, graceful shutdown, zero-scale |
 
 ### Advanced — Scale & Integration
 | File | Description |
 |------|-------------|
-| [docs/topology-spread-guide.md](./docs/topology-spread-guide.md) | Topology Spread Constraints — AZ/node distribution with Karpenter |
-| [docs/keda-guide.md](./docs/keda-guide.md) | KEDA + Karpenter — event-driven autoscaling (SQS, Kafka, Prometheus) |
+| [docs/scheduling/topology-spread-guide.md](./docs/scheduling/topology-spread-guide.md) | Topology Spread Constraints — AZ/node distribution with Karpenter |
+| [docs/integrations/keda-guide.md](./docs/integrations/keda-guide.md) | KEDA + Karpenter — event-driven autoscaling (SQS, Kafka, Prometheus) |
 
 ### Advanced — Operations
 | File | Description |
 |------|-------------|
-| [docs/multi-nodepool-guide.md](./docs/multi-nodepool-guide.md) | Multi-NodePool design — workload isolation, GPU, team-based separation |
-| [docs/ca-migration-guide.md](./docs/ca-migration-guide.md) | CA → Karpenter migration — zero-downtime migration checklist |
+| [docs/core/multi-nodepool-guide.md](./docs/core/multi-nodepool-guide.md) | Multi-NodePool design — workload isolation, GPU, team-based separation |
+| [docs/operations/ca-migration-guide.md](./docs/operations/ca-migration-guide.md) | CA → Karpenter migration — zero-downtime migration checklist |
 
 ### Advanced — Security & Observability
 | File | Description |
 |------|-------------|
-| [docs/security-guide.md](./docs/security-guide.md) | Security hardening — IMDSv2, IAM least privilege, PSS, node expiry |
-| [docs/observability-guide.md](./docs/observability-guide.md) | Prometheus + Grafana setup, key Karpenter metrics |
-| [docs/observability-advanced-guide.md](./docs/observability-advanced-guide.md) | Advanced observability — cost alerts, SLO, PromQL recipes, Loki |
+| [docs/security/security-guide.md](./docs/security/security-guide.md) | Security hardening — IMDSv2, IAM least privilege, PSS, node expiry |
+| [docs/observability/observability-guide.md](./docs/observability/observability-guide.md) | Prometheus + Grafana setup, key Karpenter metrics |
+| [docs/observability/observability-advanced-guide.md](./docs/observability/observability-advanced-guide.md) | Advanced observability — cost alerts, SLO, PromQL recipes, Loki |
 
 ### Hands-on
 | File | Description |
 |------|-------------|
-| [docs/scale-test.md](./docs/scale-test.md) | Step-by-step scale-out / scale-in test with inflate workload |
+| [docs/hands-on/scale-test.md](./docs/hands-on/scale-test.md) | Step-by-step scale-out / scale-in test with inflate workload |
 
 ---
 
 ## 상세 구조
 
 ```
-docs/                              # 가이드 문서 (17개)
-├── install.md
-├── nodepool-guide.md
-├── cost-optimization-guide.md
-└── ...
+docs/
+├── README.md
+├── getting-started/               # 설치, 초기 설정
+├── core/                          # NodePool, EC2NodeClass, 멀티 NodePool
+├── cost/                          # 비용 최적화, Spot, Graviton, Consolidation
+├── scheduling/                    # 토폴로지 분산, 배치 작업
+├── operations/                    # Disruption, CA 마이그레이션, 운영 패턴
+├── observability/                 # Prometheus, Grafana, SLO, 알림
+├── security/                      # 보안 설정
+├── integrations/                  # KEDA 등 외부 도구 연동
+├── hands-on/                      # 실습
+├── deep-dive/                     # 내부 동작 심화
+├── agents/
+├── rules/
+└── templates/
 
 ops/app/
 ├── deployment-inflate.yaml        # scale-out test workload (replicas: 0 → N)

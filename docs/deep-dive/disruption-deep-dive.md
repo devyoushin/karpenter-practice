@@ -374,4 +374,4 @@ kubectl get events \
 - [공식문서 - Disruption](https://karpenter.sh/docs/concepts/disruption/)
 - [공식문서 - Disruption Budgets](https://karpenter.sh/docs/concepts/disruption/#disruption-budgets)
 - [공식문서 - Drift](https://karpenter.sh/docs/concepts/disruption/#drift)
-- 관련 가이드: `docs/disruption-guide.md`, `docs/consolidation-guide.md`, `docs/architecture-deep-dive.md`
+- 관련 가이드: `docs/operations/disruption-guide.md`, `docs/cost/consolidation-guide.md`, `docs/deep-dive/architecture-deep-dive.md`

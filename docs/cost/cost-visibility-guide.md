@@ -452,4 +452,4 @@ receivers:
 - [공식문서 - Karpenter Metrics](https://karpenter.sh/docs/reference/metrics/)
 - [Kubecost 문서](https://docs.kubecost.com/)
 - [AWS Cost Allocation Tags](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html)
-- 관련 가이드: `docs/cost-optimization-guide.md`, `docs/observability-advanced-guide.md`
+- 관련 가이드: `docs/cost/cost-optimization-guide.md`, `docs/observability/observability-advanced-guide.md`

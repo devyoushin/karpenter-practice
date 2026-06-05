@@ -351,4 +351,4 @@ CA 대비 빠른 이유: ASG 조정 → 헬스체크 대기 → scale out 순서
 - [공식문서 - Karpenter 개요](https://karpenter.sh/docs/concepts/)
 - [공식문서 - NodePool](https://karpenter.sh/docs/concepts/nodepools/)
 - [공식문서 - NodeClaim](https://karpenter.sh/docs/concepts/nodeclaims/)
-- 관련 가이드: `docs/nodepool-guide.md`, `docs/disruption-guide.md`
+- 관련 가이드: `docs/core/nodepool-guide.md`, `docs/operations/disruption-guide.md`

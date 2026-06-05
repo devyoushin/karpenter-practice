@@ -20,6 +20,6 @@ description: Karpenter 가이드 문서 작성 전문가. NodePool, EC2NodeClass
 6. **트러블슈팅** — Karpenter 로그 분석 방법
 
 ## 참조
-- `CLAUDE.md` — EKS 환경, Karpenter 버전
-- `rules/karpenter-conventions.md` — 코드 표준
-- `templates/service-doc.md` — 문서 템플릿
+- `../../CLAUDE.md` — EKS 환경, Karpenter 버전
+- `../rules/karpenter-conventions.md` — 코드 표준
+- `../templates/service-doc.md` — 문서 템플릿

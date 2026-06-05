@@ -405,4 +405,4 @@ kubectl get nodes -o json | jq -r '
 
 - [공식문서 - Karpenter 업그레이드 가이드](https://karpenter.sh/docs/upgrading/upgrade-guide/)
 - [공식문서 - IAM 설정](https://karpenter.sh/docs/getting-started/getting-started-with-karpenter/)
-- 관련 가이드: `docs/disruption-guide.md`, `docs/disruption-deep-dive.md`, `docs/cost-optimization-guide.md`
+- 관련 가이드: `docs/operations/disruption-guide.md`, `docs/deep-dive/disruption-deep-dive.md`, `docs/cost/cost-optimization-guide.md`

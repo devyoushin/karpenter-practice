@@ -24,6 +24,6 @@ description: Karpenter 성능 최적화 전문가. 스케일 속도, 비용 효�
 - 낭비 리소스 (requests 대비 실제 사용량)
 
 ## observability 도구
-- `docs/observability-guide.md` 및 `docs/observability-advanced-guide.md` 참조
+- `../observability/observability-guide.md` 및 `../observability/observability-advanced-guide.md` 참조
 - Prometheus 메트릭: `karpenter_nodes_*`, `karpenter_pods_*`
 - Kubecost 또는 OpenCost 연동

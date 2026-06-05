@@ -405,4 +405,4 @@ kubectl get nodepool <name> -o jsonpath='{.status.resources}' | jq .
 - [공식문서 - Scheduling](https://karpenter.sh/docs/concepts/scheduling/)
 - [공식문서 - Well-Known Labels](https://karpenter.sh/docs/reference/instance-types/)
 - [공식문서 - NodePool](https://karpenter.sh/docs/concepts/nodepools/)
-- 관련 가이드: `docs/topology-spread-guide.md`, `docs/multi-nodepool-guide.md`, `docs/architecture-deep-dive.md`
+- 관련 가이드: `docs/scheduling/topology-spread-guide.md`, `docs/core/multi-nodepool-guide.md`, `docs/deep-dive/architecture-deep-dive.md`

@@ -487,7 +487,7 @@ spec:
         app: my-app
 ```
 
-> 자세한 내용은 `docs/spot-guide.md` 참고
+> 자세한 내용은 `docs/cost/spot-guide.md` 참고
 
 ---
 
@@ -514,7 +514,7 @@ resources:
     memory: "512Mi"
 ```
 
-> 자세한 내용은 `docs/consolidation-guide.md` 참고
+> 자세한 내용은 `docs/cost/consolidation-guide.md` 참고
 
 ---
 
@@ -534,7 +534,7 @@ requirements:
     values: ["m", "c", "r"]
 ```
 
-> 자세한 내용은 `docs/graviton-guide.md` 참고
+> 자세한 내용은 `docs/cost/graviton-guide.md` 참고
 
 ### 인스턴스 세대 고정
 
@@ -630,4 +630,4 @@ spec:
 
 - [공식문서 - NodePool limits](https://karpenter.sh/docs/concepts/nodepools/#speclimits)
 - [공식문서 - Disruption](https://karpenter.sh/docs/concepts/disruption/)
-- 관련 가이드: `docs/spot-guide.md`, `docs/consolidation-guide.md`, `docs/disruption-guide.md`, `docs/graviton-guide.md`, `docs/multi-nodepool-guide.md`
+- 관련 가이드: `docs/cost/spot-guide.md`, `docs/cost/consolidation-guide.md`, `docs/operations/disruption-guide.md`, `docs/cost/graviton-guide.md`, `docs/core/multi-nodepool-guide.md`
