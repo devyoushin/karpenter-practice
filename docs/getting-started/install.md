@@ -171,3 +171,4 @@ aws sqs create-queue --queue-name "${CLUSTER_NAME}" \
 
 - [공식문서 - Getting Started](https://karpenter.sh/docs/getting-started/getting-started-with-karpenter/)
 - [공식문서 - Migrating from Cluster Autoscaler](https://karpenter.sh/docs/getting-started/migrating-from-cas/)
+- [Karpenter 업그레이드](../install/upgrade/)

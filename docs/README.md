@@ -7,6 +7,7 @@ Karpenter 학습 문서는 목적별 폴더로 나눠 관리합니다.
 | 분류 | 문서 | 내용 |
 |------|------|------|
 | 시작하기 | [install.md](./getting-started/install.md) | Helm 기반 설치와 EKS 연동 |
+| 시작하기 | [upgrade/](./install/upgrade/) | Helm 기반 Karpenter 업그레이드 |
 | 핵심 개념 | [nodepool-guide.md](./core/nodepool-guide.md) | NodePool 설계와 운영 |
 | 핵심 개념 | [ec2nodeclass-guide.md](./core/ec2nodeclass-guide.md) | EC2NodeClass 설정 |
 | 핵심 개념 | [multi-nodepool-guide.md](./core/multi-nodepool-guide.md) | 멀티 NodePool 전략 |
@@ -38,3 +39,4 @@ Karpenter 학습 문서는 목적별 폴더로 나눠 관리합니다.
 | `templates/` | 서비스 문서, 런북, 장애 보고서 템플릿 |
 
 처음 읽을 문서는 [getting-started/install.md](./getting-started/install.md)입니다.
+업그레이드 절차는 [install/upgrade/](./install/upgrade/)입니다.
