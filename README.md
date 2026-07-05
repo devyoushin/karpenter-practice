@@ -9,7 +9,7 @@ A hands-on repository for learning Karpenter on EKS.
 ## 어디서 시작할까
 
 - 문서 지도: `docs/README.md`
-- 첫 문서: `docs/getting-started/install.md`
+- 첫 문서: `docs/02-getting-started/install.md`
 - 운영 보조 자료: `ops/README.md`
 - AI 작업 지침: `CLAUDE.md`
 
@@ -26,17 +26,17 @@ A hands-on repository for learning Karpenter on EKS.
 ## Learning Path
 
 ```
-1. Installation    → docs/getting-started/install.md
-2. Core Concepts   → docs/core/nodepool-guide.md, docs/core/ec2nodeclass-guide.md
+1. Installation    → docs/02-getting-started/install.md
+2. Core Concepts   → docs/03-core/nodepool-guide.md, docs/03-core/ec2nodeclass-guide.md
 3. Advanced
-   ├── Cost        → docs/cost/consolidation-guide.md, docs/cost/spot-guide.md, docs/cost/graviton-guide.md
-   │               → docs/cost/cost-optimization-guide.md
-   ├── Control     → docs/operations/disruption-guide.md, docs/scheduling/batch-job-guide.md
-   ├── Scale       → docs/scheduling/topology-spread-guide.md, docs/integrations/keda-guide.md
-   ├── Operations  → docs/core/multi-nodepool-guide.md, docs/operations/ca-migration-guide.md
-   ├── Security    → docs/security/security-guide.md
-   └── Observability → docs/observability/observability-guide.md, docs/observability/observability-advanced-guide.md
-4. Hands-on        → docs/hands-on/scale-test.md
+   ├── Cost        → docs/05-cost/consolidation-guide.md, docs/05-cost/spot-guide.md, docs/05-cost/graviton-guide.md
+   │               → docs/05-cost/cost-optimization-guide.md
+   ├── Control     → docs/07-operations/disruption-guide.md, docs/04-scheduling/batch-job-guide.md
+   ├── Scale       → docs/04-scheduling/topology-spread-guide.md, docs/09-integrations/keda-guide.md
+   ├── Operations  → docs/03-core/multi-nodepool-guide.md, docs/07-operations/ca-migration-guide.md
+   ├── Security    → docs/08-security/security-guide.md
+   └── Observability → docs/06-observability/observability-guide.md, docs/06-observability/observability-advanced-guide.md
+4. Hands-on        → docs/11-hands-on/scale-test.md
 ```
 
 ---
@@ -46,51 +46,51 @@ A hands-on repository for learning Karpenter on EKS.
 ### Installation
 | File | Description |
 |------|-------------|
-| [docs/getting-started/install.md](./docs/getting-started/install.md) | Install Karpenter via Helm on EKS (IAM, IRSA, Helm) |
+| [docs/02-getting-started/install.md](./docs/02-getting-started/install.md) | Install Karpenter via Helm on EKS (IAM, IRSA, Helm) |
 
 ### Core Concepts
 | File | Description |
 |------|-------------|
-| [docs/core/nodepool-guide.md](./docs/core/nodepool-guide.md) | NodePool — node provisioning rules (instance types, limits, taints) |
-| [docs/core/ec2nodeclass-guide.md](./docs/core/ec2nodeclass-guide.md) | EC2NodeClass — AWS-specific settings (AMI, subnet, security group) |
+| [docs/03-core/nodepool-guide.md](./docs/03-core/nodepool-guide.md) | NodePool — node provisioning rules (instance types, limits, taints) |
+| [docs/03-core/ec2nodeclass-guide.md](./docs/03-core/ec2nodeclass-guide.md) | EC2NodeClass — AWS-specific settings (AMI, subnet, security group) |
 
 ### Advanced — Cost
 | File | Description |
 |------|-------------|
-| [docs/cost/cost-optimization-guide.md](./docs/cost/cost-optimization-guide.md) | Cost strategy — env-based NodePool, scheduled node on/off (EventBridge+Lambda) |
-| [docs/cost/consolidation-guide.md](./docs/cost/consolidation-guide.md) | Node Consolidation — automatic bin-packing and cost optimization |
-| [docs/cost/spot-guide.md](./docs/cost/spot-guide.md) | Spot Instances — interruption handling and mixed capacity strategy |
-| [docs/cost/graviton-guide.md](./docs/cost/graviton-guide.md) | Graviton (ARM64) — multi-arch strategy, ~20% cost reduction |
+| [docs/05-cost/cost-optimization-guide.md](./docs/05-cost/cost-optimization-guide.md) | Cost strategy — env-based NodePool, scheduled node on/off (EventBridge+Lambda) |
+| [docs/05-cost/consolidation-guide.md](./docs/05-cost/consolidation-guide.md) | Node Consolidation — automatic bin-packing and cost optimization |
+| [docs/05-cost/spot-guide.md](./docs/05-cost/spot-guide.md) | Spot Instances — interruption handling and mixed capacity strategy |
+| [docs/05-cost/graviton-guide.md](./docs/05-cost/graviton-guide.md) | Graviton (ARM64) — multi-arch strategy, ~20% cost reduction |
 
 ### Advanced — Control
 | File | Description |
 |------|-------------|
-| [docs/operations/disruption-guide.md](./docs/operations/disruption-guide.md) | Disruption Controls — budgets, do-not-disrupt annotations, drift |
-| [docs/scheduling/batch-job-guide.md](./docs/scheduling/batch-job-guide.md) | Batch/Job patterns — protecting jobs, graceful shutdown, zero-scale |
+| [docs/07-operations/disruption-guide.md](./docs/07-operations/disruption-guide.md) | Disruption Controls — budgets, do-not-disrupt annotations, drift |
+| [docs/04-scheduling/batch-job-guide.md](./docs/04-scheduling/batch-job-guide.md) | Batch/Job patterns — protecting jobs, graceful shutdown, zero-scale |
 
 ### Advanced — Scale & Integration
 | File | Description |
 |------|-------------|
-| [docs/scheduling/topology-spread-guide.md](./docs/scheduling/topology-spread-guide.md) | Topology Spread Constraints — AZ/node distribution with Karpenter |
-| [docs/integrations/keda-guide.md](./docs/integrations/keda-guide.md) | KEDA + Karpenter — event-driven autoscaling (SQS, Kafka, Prometheus) |
+| [docs/04-scheduling/topology-spread-guide.md](./docs/04-scheduling/topology-spread-guide.md) | Topology Spread Constraints — AZ/node distribution with Karpenter |
+| [docs/09-integrations/keda-guide.md](./docs/09-integrations/keda-guide.md) | KEDA + Karpenter — event-driven autoscaling (SQS, Kafka, Prometheus) |
 
 ### Advanced — Operations
 | File | Description |
 |------|-------------|
-| [docs/core/multi-nodepool-guide.md](./docs/core/multi-nodepool-guide.md) | Multi-NodePool design — workload isolation, GPU, team-based separation |
-| [docs/operations/ca-migration-guide.md](./docs/operations/ca-migration-guide.md) | CA → Karpenter migration — zero-downtime migration checklist |
+| [docs/03-core/multi-nodepool-guide.md](./docs/03-core/multi-nodepool-guide.md) | Multi-NodePool design — workload isolation, GPU, team-based separation |
+| [docs/07-operations/ca-migration-guide.md](./docs/07-operations/ca-migration-guide.md) | CA → Karpenter migration — zero-downtime migration checklist |
 
 ### Advanced — Security & Observability
 | File | Description |
 |------|-------------|
-| [docs/security/security-guide.md](./docs/security/security-guide.md) | Security hardening — IMDSv2, IAM least privilege, PSS, node expiry |
-| [docs/observability/observability-guide.md](./docs/observability/observability-guide.md) | Prometheus + Grafana setup, key Karpenter metrics |
-| [docs/observability/observability-advanced-guide.md](./docs/observability/observability-advanced-guide.md) | Advanced observability — cost alerts, SLO, PromQL recipes, Loki |
+| [docs/08-security/security-guide.md](./docs/08-security/security-guide.md) | Security hardening — IMDSv2, IAM least privilege, PSS, node expiry |
+| [docs/06-observability/observability-guide.md](./docs/06-observability/observability-guide.md) | Prometheus + Grafana setup, key Karpenter metrics |
+| [docs/06-observability/observability-advanced-guide.md](./docs/06-observability/observability-advanced-guide.md) | Advanced observability — cost alerts, SLO, PromQL recipes, Loki |
 
 ### Hands-on
 | File | Description |
 |------|-------------|
-| [docs/hands-on/scale-test.md](./docs/hands-on/scale-test.md) | Step-by-step scale-out / scale-in test with inflate workload |
+| [docs/11-hands-on/scale-test.md](./docs/11-hands-on/scale-test.md) | Step-by-step scale-out / scale-in test with inflate workload |
 
 ---
 

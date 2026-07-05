@@ -1,42 +1,20 @@
-# Karpenter Docs
+# karpenter-practice 문서
 
-Karpenter 학습 문서는 목적별 폴더로 나눠 관리합니다.
+이 디렉토리는 주제별 번호 체계로 문서를 정리합니다. 앞 번호는 학습과 운영 흐름을 나타내며, 90번대는 저장소 관리용 문서입니다.
 
-## 학습 문서
+## 문서 구조
 
-| 분류 | 문서 | 내용 |
-|------|------|------|
-| 시작하기 | [install.md](./getting-started/install.md) | Helm 기반 설치와 EKS 연동 |
-| 시작하기 | [upgrade/](./install/upgrade/) | Helm 기반 Karpenter 업그레이드 |
-| 핵심 개념 | [nodepool-guide.md](./core/nodepool-guide.md) | NodePool 설계와 운영 |
-| 핵심 개념 | [ec2nodeclass-guide.md](./core/ec2nodeclass-guide.md) | EC2NodeClass 설정 |
-| 핵심 개념 | [multi-nodepool-guide.md](./core/multi-nodepool-guide.md) | 멀티 NodePool 전략 |
-| 비용 | [cost-optimization-guide.md](./cost/cost-optimization-guide.md) | 비용 최적화 전략 |
-| 비용 | [cost-visibility-guide.md](./cost/cost-visibility-guide.md) | 비용 가시성 |
-| 비용 | [consolidation-guide.md](./cost/consolidation-guide.md) | 노드 통합 |
-| 비용 | [spot-guide.md](./cost/spot-guide.md) | Spot 인스턴스 운영 |
-| 비용 | [graviton-guide.md](./cost/graviton-guide.md) | Graviton 워크로드 |
-| 스케줄링 | [topology-spread-guide.md](./scheduling/topology-spread-guide.md) | 토폴로지 분산 |
-| 스케줄링 | [batch-job-guide.md](./scheduling/batch-job-guide.md) | 배치 작업 최적화 |
-| 운영 | [disruption-guide.md](./operations/disruption-guide.md) | Disruption 정책 |
-| 운영 | [ca-migration-guide.md](./operations/ca-migration-guide.md) | Cluster Autoscaler 마이그레이션 |
-| 운영 | [production-patterns.md](./operations/production-patterns.md) | 프로덕션 운영 패턴 |
-| 관측 | [observability-guide.md](./observability/observability-guide.md) | 기본 관찰가능성 |
-| 관측 | [observability-advanced-guide.md](./observability/observability-advanced-guide.md) | 심화 관찰가능성 |
-| 보안 | [security-guide.md](./security/security-guide.md) | 보안 설정 |
-| 연동 | [keda-guide.md](./integrations/keda-guide.md) | KEDA 연동 |
-| 실습 | [scale-test.md](./hands-on/scale-test.md) | 스케일 테스트 |
-| 심화 | [architecture-deep-dive.md](./deep-dive/architecture-deep-dive.md) | Karpenter 내부 동작 |
-| 심화 | [disruption-deep-dive.md](./deep-dive/disruption-deep-dive.md) | Disruption 심화 |
-| 심화 | [scheduling-deep-dive.md](./deep-dive/scheduling-deep-dive.md) | 스케줄링 심화 |
-
-## 보조 자료
-
-| 폴더 | 내용 |
-|------|------|
-| `agents/` | AI 에이전트 역할 정의 |
-| `rules/` | 문서 작성, Karpenter 관례, 보안, 모니터링 규칙 |
-| `templates/` | 서비스 문서, 런북, 장애 보고서 템플릿 |
-
-처음 읽을 문서는 [getting-started/install.md](./getting-started/install.md)입니다.
-업그레이드 절차는 [install/upgrade/](./install/upgrade/)입니다.
+- [01-installation](./01-installation/): Karpenter 설치와 업그레이드 - Karpenter 설치, 업그레이드, 실행 환경 준비 문서를 모읍니다.
+- [02-getting-started](./02-getting-started/): Karpenter 시작하기 - Karpenter를 처음 구성하고 실행하는 기본 흐름을 다룹니다.
+- [03-core](./03-core/): Karpenter 핵심 리소스 - NodePool, EC2NodeClass 등 핵심 리소스 문서를 모읍니다.
+- [04-scheduling](./04-scheduling/): 스케줄링 전략 - 워크로드 배치와 스케줄링 전략 문서를 모읍니다.
+- [05-cost](./05-cost/): 비용 최적화 - Spot, Graviton, consolidation 등 비용 최적화 문서를 모읍니다.
+- [06-observability](./06-observability/): 관측성과 모니터링 - Karpenter 지표, 대시보드, 관측성 문서를 모읍니다.
+- [07-operations](./07-operations/): 운영과 장애 대응 - 운영 패턴, disruption, 마이그레이션 문서를 모읍니다.
+- [08-security](./08-security/): 보안 - Karpenter 운영 보안 문서를 모읍니다.
+- [09-integrations](./09-integrations/): 연동 - KEDA 등 외부 도구 연동 문서를 모읍니다.
+- [10-deep-dive](./10-deep-dive/): 심화 분석 - 아키텍처와 내부 동작을 깊게 다루는 문서를 모읍니다.
+- [11-hands-on](./11-hands-on/): 실습 - Karpenter 동작을 직접 확인하는 실습 문서를 모읍니다.
+- [90-standards](./90-standards/): 문서 작성 표준 - 저장소 문서 작성 규칙과 운영 기준을 관리합니다.
+- [91-templates](./91-templates/): 문서 템플릿 - 반복해서 사용하는 문서 템플릿을 관리합니다.
+- [99-agents](./99-agents/): AI 에이전트 가이드 - Karpenter 설계와 문서화에 활용할 에이전트 역할 정의를 관리합니다.

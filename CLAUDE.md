@@ -43,7 +43,7 @@ karpenter-practice/
 |--------|------|---------|
 | `/new-doc` | 새 가이드 문서 생성 | `/new-doc spot-interruption-handling` |
 | `/new-runbook` | 새 런북 생성 | `/new-runbook NodePool 긴급 스케일다운` |
-| `/review-doc` | 문서/YAML 검토 | `/review-doc docs/core/nodepool-guide.md` |
+| `/review-doc` | 문서/YAML 검토 | `/review-doc docs/03-core/nodepool-guide.md` |
 | `/add-troubleshooting` | 트러블슈팅 케이스 추가 | `/add-troubleshooting Pod Pending 노드 미프로비저닝` |
 | `/search-kb` | 지식베이스 검색 | `/search-kb Spot 중단 처리` |
 
@@ -53,28 +53,28 @@ karpenter-practice/
 
 | 문서 | 주제 |
 |------|------|
-| `docs/getting-started/install.md` | Karpenter 설치 (Helm) |
-| `docs/core/nodepool-guide.md` | NodePool 기본 설정 |
-| `docs/core/ec2nodeclass-guide.md` | EC2NodeClass 설정 |
-| `docs/core/multi-nodepool-guide.md` | 멀티 NodePool 전략 |
-| `docs/cost/consolidation-guide.md` | 노드 통합(Consolidation) |
-| `docs/operations/disruption-guide.md` | Disruption 정책 |
-| `docs/cost/spot-guide.md` | Spot 인스턴스 활용 |
-| `docs/cost/graviton-guide.md` | Graviton(ARM) 워크로드 |
-| `docs/scheduling/topology-spread-guide.md` | 토폴로지 분산 |
-| `docs/scheduling/batch-job-guide.md` | 배치 작업 최적화 |
-| `docs/observability/observability-guide.md` | 기본 관찰가능성 |
-| `docs/observability/observability-advanced-guide.md` | 심화 관찰가능성 |
-| `docs/operations/ca-migration-guide.md` | Cluster Autoscaler 마이그레이션 |
-| `docs/hands-on/scale-test.md` | 스케일 테스트 (inflate) |
-| `docs/security/security-guide.md` | 보안 설정 |
-| `docs/integrations/keda-guide.md` | KEDA 연동 |
-| `docs/cost/cost-optimization-guide.md` | 비용 최적화 전략 (환경별 NodePool, 야간 자동 종료) |
-| `docs/deep-dive/architecture-deep-dive.md` | Karpenter 내부 동작 원리 (Provisioning Loop, NodeClaim 생명주기) |
-| `docs/deep-dive/disruption-deep-dive.md` | Disruption 심화 (Consolidation 알고리즘, Drift 메커니즘, PDB 상호작용) |
-| `docs/deep-dive/scheduling-deep-dive.md` | 스케줄링 심화 (인스턴스 선택 로직, Well-Known Labels, Affinity 전략) |
-| `docs/operations/production-patterns.md` | 프로덕션 운영 패턴 (AMI 롤링, Karpenter 업그레이드, 장애 대응) |
-| `docs/cost/cost-visibility-guide.md` | 비용 가시성 (Prometheus 메트릭, Kubecost, Chargeback 모델) |
+| `docs/02-getting-started/install.md` | Karpenter 설치 (Helm) |
+| `docs/03-core/nodepool-guide.md` | NodePool 기본 설정 |
+| `docs/03-core/ec2nodeclass-guide.md` | EC2NodeClass 설정 |
+| `docs/03-core/multi-nodepool-guide.md` | 멀티 NodePool 전략 |
+| `docs/05-cost/consolidation-guide.md` | 노드 통합(Consolidation) |
+| `docs/07-operations/disruption-guide.md` | Disruption 정책 |
+| `docs/05-cost/spot-guide.md` | Spot 인스턴스 활용 |
+| `docs/05-cost/graviton-guide.md` | Graviton(ARM) 워크로드 |
+| `docs/04-scheduling/topology-spread-guide.md` | 토폴로지 분산 |
+| `docs/04-scheduling/batch-job-guide.md` | 배치 작업 최적화 |
+| `docs/06-observability/observability-guide.md` | 기본 관찰가능성 |
+| `docs/06-observability/observability-advanced-guide.md` | 심화 관찰가능성 |
+| `docs/07-operations/ca-migration-guide.md` | Cluster Autoscaler 마이그레이션 |
+| `docs/11-hands-on/scale-test.md` | 스케일 테스트 (inflate) |
+| `docs/08-security/security-guide.md` | 보안 설정 |
+| `docs/09-integrations/keda-guide.md` | KEDA 연동 |
+| `docs/05-cost/cost-optimization-guide.md` | 비용 최적화 전략 (환경별 NodePool, 야간 자동 종료) |
+| `docs/10-deep-dive/architecture-deep-dive.md` | Karpenter 내부 동작 원리 (Provisioning Loop, NodeClaim 생명주기) |
+| `docs/10-deep-dive/disruption-deep-dive.md` | Disruption 심화 (Consolidation 알고리즘, Drift 메커니즘, PDB 상호작용) |
+| `docs/10-deep-dive/scheduling-deep-dive.md` | 스케줄링 심화 (인스턴스 선택 로직, Well-Known Labels, Affinity 전략) |
+| `docs/07-operations/production-patterns.md` | 프로덕션 운영 패턴 (AMI 롤링, Karpenter 업그레이드, 장애 대응) |
+| `docs/05-cost/cost-visibility-guide.md` | 비용 가시성 (Prometheus 메트릭, Kubecost, Chargeback 모델) |
 
 ---
 
